@@ -1,0 +1,52 @@
+openapi: 3.0.3
+info:
+  title: AI Dev Tools Application API
+  description: Contract-first OpenAPI specification for the application
+  version: 1.0.0
+servers:
+  - url: http://localhost:8000/api/v1
+    description: Local development server
+paths:
+  /health:
+    get:
+      summary: Health check endpoint
+      responses:
+        '200':
+          description: Service is healthy
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+  /sessions:
+    post:
+      summary: Create new interactive session
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [title]
+              properties:
+                title:
+                  type: string
+                  example: Coding Interview Session
+      responses:
+        '201':
+          description: Session created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  sessionId:
+                    type: string
+                    example: sess-abc123
+                  shareableLink:
+                    type: string
+                    example: http://localhost:3000/session/sess-abc123
+

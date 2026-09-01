@@ -1,0 +1,17 @@
+# Secrets & Environment variables
+.env
+.env.*
+!.env.example
+
+# Python cache & virtual environments
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+env/
+venv/
+
+# System files
+.DS_Store
+Thumbs.db
+
