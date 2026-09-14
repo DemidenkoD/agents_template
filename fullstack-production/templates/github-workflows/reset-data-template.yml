@@ -1,0 +1,83 @@
+# GitHub Actions Workflow Template: Guarded Data Reset & Baseline Seed
+# Strategy:
+#   DANGER: Completely flushes application caches, re-provisions databases,
+#   and seeds clean development personas and fixture data.
+#   Requires explicit confirmation: input `confirm` must equal `RESET`.
+
+name: reset-data
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: 'Type RESET to confirm clearing database and cache'
+        required: true
+        default: ''
+      skip_snapshot:
+        description: 'Skip safety snapshot before reset (not recommended)'
+        required: false
+        type: boolean
+        default: false
+
+concurrency:
+  group: reset-data
+  cancel-in-progress: false
+
+jobs:
+  reset:
+    name: reset database and cache
+    runs-on: ubuntu-latest
+    steps:
+      - name: validate confirmation guard
+        run: |
+          if [ "${{ inputs.confirm }}" != "RESET" ]; then
+            echo "ERROR: Confirmation check failed. You must type RESET to execute." >&2
+            exit 1
+          fi
+
+      - name: execute reset via SSH
+        uses: appleboy/ssh-action@v1
+        env:
+          SKIP_SNAPSHOT: ${{ inputs.skip_snapshot }}
+        with:
+          host: ${{ secrets.DEPLOY_SSH_HOST }}
+          username: ${{ secrets.DEPLOY_SSH_USER }}
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          envs: SKIP_SNAPSHOT
+          script: |
+            set -euo pipefail
+            cd "${{ secrets.DEPLOY_DIR }}"
+            git fetch origin
+            git checkout -f "${{ github.sha }}"
+
+            ENV_FILE="${{ secrets.ENV_FILE || '.env' }}"
+
+            # 1. Pre-reset safety snapshot
+            if [ "${SKIP_SNAPSHOT}" != "true" ]; then
+              echo "[reset] Creating pre-reset safety backup..."
+              if [ -f "ops/backup.sh" ]; then
+                bash ops/backup.sh --env-file "${ENV_FILE}"
+              fi
+            fi
+
+            # 2. Flush cache and active sessions
+            echo "[reset] Flushing cache..."
+            docker compose --env-file "${ENV_FILE}" exec -T redis redis-cli flushall || true
+
+            # 3. Re-run migrations / baseline provisioning
+            echo "[reset] Applying migrations..."
+            docker compose --env-file "${ENV_FILE}" run --rm migrate
+
+            # 4. Seed baseline test fixtures and personas
+            echo "[reset] Seeding development accounts and fixture data..."
+            if [ -f "ops/db-reset.sh" ]; then
+              bash ops/db-reset.sh --env-file "${ENV_FILE}" --yes
+            elif [ -f "dev-seed/seed.ts" ]; then
+              docker compose --env-file "${ENV_FILE}" run --rm migrate bun run dev-seed/seed.ts
+            fi
+
+            # 5. Reload containers
+            echo "[reset] Reloading application containers..."
+            docker compose --env-file "${ENV_FILE}" up -d --wait
+
+            echo "[reset] Reset and baseline seed completed successfully!"

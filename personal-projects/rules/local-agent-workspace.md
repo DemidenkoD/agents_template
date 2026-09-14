@@ -22,16 +22,21 @@ When working in this mode, the agent operates as a **Careful Guardian**:
 2. **Self-Contained `.agents/` Directory Structure:**
    ```text
    .agents/
-   ├── todo.md                  # Task roadmap & execution checklist (inside .agents/, not in project root)
+   ├── START_HERE.md            # Fast onboarding guide (read 3 files, run 1 command)
+   ├── DEV_DIARY.md             # Chronological audit log of all agent sessions & handoffs
+   ├── todo.md                  # Task roadmap & execution checklist
+   ├── reservations.json        # Advisory file/module reservations for multi-agent safety
    ├── context/                 # Codebase analysis results to help agent adapt to the project
    │   ├── codebase-map.md      # Key directories, entrypoints, and critical paths
    │   ├── architecture.md      # High-level architecture, data flows, and dependencies
    │   └── conventions.md       # Discovered code styles, naming patterns, and test frameworks
-   ├── scripts/                 # Safe local testing scripts, reproduction helpers, & scratchpads
+   ├── scripts/                 # Safe local testing scripts, reproduction helpers, & gates
+   │   ├── session-end-check.sh # Automated post-session validation script
+   │   └── verify.sh            # Two-tier targeted test runner
    ├── logs/                    # Folder for app runtime logs, debug outputs, and server traces
-   ├── changes/                 # AI-authored records explaining what changed and why
+   ├── changes/                 # Historical AI-authored records explaining what changed and why
    ├── rules/                   # Project-specific agent rules (including non-owner guardrails)
-   └── skills/                  # Project-specific agent skills
+   └── skills/                  # On-demand domain skills with standard YAML frontmatter
    ```
 
 3. **Safe Local Testing Scripts (`.agents/scripts/`):**

@@ -1,0 +1,60 @@
+# GitHub Actions Workflow Template: On-Host / CI Container Build
+# Strategy:
+#   Compiles container images using Docker BuildKit layer caching.
+#   Does NOT touch running application containers, persistent databases, or caches.
+#   Tags images with :<env>-<sha> and :<env>-latest.
+
+name: build-containers
+
+on:
+  workflow_dispatch:
+    inputs:
+      service:
+        description: 'Specific service to build (default: all)'
+        required: false
+        type: string
+        default: 'all'
+  workflow_call:
+    inputs:
+      service:
+        description: 'Specific service to build (default: all)'
+        required: false
+        type: string
+        default: 'all'
+
+jobs:
+  build:
+    name: compile container images
+    runs-on: ubuntu-latest
+    steps:
+      - name: build containers on host via SSH
+        uses: appleboy/ssh-action@v1
+        env:
+          TARGET_SERVICE: ${{ inputs.service }}
+          IMAGE_TAG: build-${{ github.sha }}
+        with:
+          host: ${{ secrets.DEPLOY_SSH_HOST }}
+          username: ${{ secrets.DEPLOY_SSH_USER }}
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          envs: TARGET_SERVICE,IMAGE_TAG
+          script: |
+            set -euo pipefail
+            cd "${{ secrets.DEPLOY_DIR }}"
+            git fetch origin
+            git checkout -f "${{ github.sha }}"
+
+            ENV_FILE="${{ secrets.ENV_FILE || '.env' }}"
+
+            export IMAGE_TAG
+            if [ "${TARGET_SERVICE}" = "all" ] || [ -z "${TARGET_SERVICE}" ]; then
+              echo "[build] Building all services with BuildKit caching..."
+              docker compose --env-file "${ENV_FILE}" build
+            else
+              echo "[build] Building service '${TARGET_SERVICE}' with BuildKit caching..."
+              docker compose --env-file "${ENV_FILE}" build "${TARGET_SERVICE}"
+            fi
+
+            echo "[build] Pruning dangling intermediate layers..."
+            docker image prune -f || true
+
+            echo "[build] Build completed successfully!"

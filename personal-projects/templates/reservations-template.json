@@ -1,0 +1,15 @@
+{
+  "schema_version": "2.0",
+  "branch": "main",
+  "notes": "Advisory function-level reservations. Same file allowed iff scopes are disjoint. Stale after 2 hours. Markings stripped before commit.",
+  "reservations": [
+    {
+      "file": "path/to/file.py",
+      "scope": "function-or-module-name",
+      "why": "feature-description-or-issue-id",
+      "agent": "AgentName",
+      "ts": 1700000000,
+      "date": "YYYY-MM-DD"
+    }
+  ]
+}
