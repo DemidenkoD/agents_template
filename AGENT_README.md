@@ -132,14 +132,21 @@ When the user asks you to set up or bootstrap a project, execute `./setup.sh` or
   - `database-safety.md`: Distinguishes migrations from destructive database wipes; enforces backups.
   - `use-uv-zoomcamp.md`: Mandates `uv` as the default Python manager for all Zoomcamps.
   - `agent-storage-and-git-tracking.md`: Details the storage policies across project types.
+  - `subagent-workflow-for-course.md`: Course-generic scout/executor/verifier subagent workflow.
+  - `mcp-server-usage.md`: MCP server usage and inspection workflow.
+  - `playwright-recording-and-demo.md`: Playwright recording and demo video pipeline.
 - **Scripts (`general/scripts/`):**
   - `session-end-check.sh`: Automated pre-completion validator (diary presence, reservation cleanup, `git diff --check`).
   - `verify-template.sh`: Two-tier verification runner template for fast unit tests vs slow end-to-end tests.
 - **Templates (`general/templates/`):**
   - `dev-diary-template.md`: Standard structured `DEV_DIARY.md` template.
   - `start-here-template.md`: Standard fast onboarding guide for automated agents.
+  - `opencode-mcp-template.json`: MCP server configuration starter.
+  - `playwright-demo-config-template.ts`: Playwright demo recording configuration starter.
 - **Skills (`general/skills/`):**
   - `project-health-check/SKILL.md`: Audits environment, dependencies, and git working tree.
+  - `record-demo/SKILL.md`: Records narrated UI demo videos.
+  - `scout-with-graph/SKILL.md`: Read-only repo-graph scouting workflow.
 
 ---
 
