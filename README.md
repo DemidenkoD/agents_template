@@ -101,13 +101,22 @@ agents_template/
 │   │   ├── package-management.md            # Rule: Package installation & mandatory cleanup
 │   │   ├── use-uv-zoomcamp.md               # Rule: Enforce 'uv' package manager for Python/Zoomcamp
 │   │   ├── multi-agent-orchestration.md     # Rule: Multi-subagent delegation & workspace isolation
+│   │   ├── subagent-workflow-for-course.md    # Rule: Course-generic scout/exec/verify subagent workflow
+│   │   ├── mcp-server-usage.md                # Rule: MCP server usage & inspection workflow
+│   │   ├── playwright-recording-and-demo.md   # Rule: Playwright recording & demo video pipeline
 │   │   └── agent-storage-and-git-tracking.md# Rule: Storage policies across project modes
 │   ├── scripts/
 │   │   ├── session-end-check.sh             # Script: Universal post-session validation gate
 │   │   └── verify-template.sh               # Script: Two-tier verification runner template
+│   ├── skills/
+│   │   ├── project-health-check/            # Skill: Audit env, deps & git working tree
+│   │   ├── record-demo/                     # Skill: Record narrated UI demo videos
+│   │   └── scout-with-graph/                # Skill: Read-only repo-graph scouting
 │   └── templates/
 │       ├── dev-diary-template.md            # Template: Standardized DEV_DIARY.md starter
-│       └── start-here-template.md           # Template: Standardized START_HERE.md onboarding guide
+│       ├── start-here-template.md           # Template: Standardized START_HERE.md onboarding guide
+│       ├── opencode-mcp-template.json       # Template: MCP server config starter
+│       └── playwright-demo-config-template.ts # Template: Playwright demo recording config
 │
 ├── fullstack-production/                    # Enterprise fullstack standards (Architect Persona)
 │   ├── rules/

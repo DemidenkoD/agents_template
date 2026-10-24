@@ -1,0 +1,29 @@
+{
+  "_comment": "Copy the `mcp` block into <project>/opencode.json. Secrets go in env / .env.local — NEVER in this file.",
+  "mcp": {
+    "context7": {
+      "_comment": "Remote docs. No credentials needed.",
+      "type": "remote",
+      "url": "https://mcp.context7.com/mcp",
+      "enabled": true
+    },
+    "postgres": {
+      "_comment": "Read-only recon. Put the connection string in an env var; placeholder below, never a real password.",
+      "type": "local",
+      "command": ["npx", "mcp-postgres-server", "${POSTGRES_URL:-postgres://<user>@localhost:5432/<db>}"],
+      "enabled": true
+    },
+    "playwright": {
+      "_comment": "Headless isolated browser. No credentials.",
+      "type": "local",
+      "command": ["npx", "@playwright/mcp", "--headless", "--isolated"],
+      "enabled": true
+    },
+    "graft": {
+      "_comment": "Repo-graph context. Requires `graft build` once per clone; no credentials.",
+      "type": "local",
+      "command": ["graft", "mcp"],
+      "enabled": true
+    }
+  }
+}
